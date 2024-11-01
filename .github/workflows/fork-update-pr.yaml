@@ -1,0 +1,51 @@
+#
+#  Author: Nho Luong
+#  Date: 2020-03-13 21:10:39 +0000 (Fri, 13 Mar 2020)
+#
+#  vim:ts=2:sts=2:sw=2:et
+#
+#  https://github.com/nholuongut/dockerfiles
+#
+#  License: see accompanying Nho Luong LICENSE file
+#
+#  If you're using my code you're welcome to connect with me on LinkedIn and optionally send me feedback to help steer this or other code I publish
+#
+
+# ============================================================================ #
+#                          F o r k   U p d a t e   P R
+# ============================================================================ #
+
+# For a fork of the original repo, activate to keep its branches up to date via Pull Requests
+#
+# To be used in conjunction with the adjacent fork-sync.yaml which keeps the default branch up to date
+
+---
+name: Fork Update PR
+
+on:
+  workflow_dispatch:
+    inputs:
+      debug:
+        type: boolean
+        required: false
+        default: false
+  schedule:
+    - cron: '0 10 * * 1'
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: ${{ github.ref }}-${{ github.workflow }}
+  cancel-in-progress: false
+
+jobs:
+  fork_update_pr:
+    # github.event.repository context not available in scheduled workflows
+    #if: github.event.repository.fork == true
+    if: github.repository_owner != 'nholuongut'
+    name: Fork Update PR
+    uses: nholuongut/GitHub-Actions/.github/workflows/fork-update-pr.yaml@master
+    with:
+      debug: ${{ github.event.inputs.debug }}

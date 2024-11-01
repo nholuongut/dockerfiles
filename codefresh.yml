@@ -1,0 +1,41 @@
+#
+#  Author: Nho Luong
+#  Date: 2020-03-13 21:10:39 +0000 (Fri, 13 Mar 2020)
+#
+#  vim:ts=2:sts=2:sw=2:et
+#
+#  https://github.com/nholuongut/dockerfiles
+#
+#  License: see accompanying Nho Luong LICENSE file
+#
+#  If you're using my code you're welcome to connect with me on LinkedIn and optionally send me feedback to help steer this or other code I publish
+#
+
+# ============================================================================ #
+#                            C o d e f r e s h   C I
+# ============================================================================ #
+
+# https://codefresh.io/docs/docs/codefresh-yaml/
+
+version: "1.0"
+stages:
+  - "checkout"
+  - "build"
+steps:
+  checkout:
+    type: "git-clone"
+    description: "Cloning main repository..."
+    repo: '${{CF_REPO_OWNER}}/${{CF_REPO_NAME}}'
+    revision: "${{CF_REVISION}}"
+    stage: "checkout"
+  build:
+    title: Running docker image
+    type: freestyle
+    working_directory: '${{CF_REPO_NAME}}'
+    arguments:
+      image: 'ubuntu:18.04'
+      commands:
+        - setup/ci_bootstrap.sh
+        - make init
+        - make ci
+        - make test
